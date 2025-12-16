@@ -11,7 +11,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class XapiStatementClientTest {
@@ -25,12 +24,8 @@ class XapiStatementClientTest {
         config = new XapiClientConfig("http://localhost:8000/xapi", "user", "pass", 5);
         mockHttp = mock(XapiHttpClient.class);
 
-        client = new XapiStatementClient(config) {
-            @Override
-            protected XapiHttpClient createHttpClient() {
-                return mockHttp;
-            }
-        };
+        // Inject the mock directly
+        client = new XapiStatementClient(config, mockHttp);
     }
 
     @Test
@@ -39,16 +34,10 @@ class XapiStatementClientTest {
         XapiStatement st = new XapiStatement();
         st.setId(id);
 
-        String jsonResponse = """
-        {
-            "status": 200,
-            "success": true,
-            "body": "[]"
-        }
-        """;
+        XapiHttpResponse httpResponse = new XapiHttpResponse(200, "[]");
 
         when(mockHttp.post(eq(config.getEndpoint() + "/statements"), anyString()))
-                .thenReturn(jsonResponse);
+                .thenReturn(httpResponse);
 
         XapiResponse res = client.sendStatement(st);
 
@@ -68,15 +57,10 @@ class XapiStatementClientTest {
         XapiStatement s2 = new XapiStatement();
         s2.setId(UUID.randomUUID());
 
-        String jsonResponse = """
-        {
-            "status": 204,
-            "success": true
-        }
-        """;
+        XapiHttpResponse httpResponse = new XapiHttpResponse(204, "");
 
         when(mockHttp.post(eq(config.getEndpoint() + "/statements"), anyString()))
-                .thenReturn(jsonResponse);
+                .thenReturn(httpResponse);
 
         XapiResponse res = client.sendStatements(List.of(s1, s2));
 
@@ -89,16 +73,10 @@ class XapiStatementClientTest {
         XapiStatement st = new XapiStatement();
         st.setId(UUID.randomUUID());
 
-        String jsonResponse = """
-        {
-            "status": 500,
-            "success": false,
-            "body": "server error"
-        }
-        """;
+        XapiHttpResponse httpResponse = new XapiHttpResponse(500, "server error");
 
         when(mockHttp.post(eq(config.getEndpoint() + "/statements"), anyString()))
-                .thenReturn(jsonResponse);
+                .thenReturn(httpResponse);
 
         XapiResponse res = client.sendStatement(st);
 

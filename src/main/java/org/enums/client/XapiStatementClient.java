@@ -16,21 +16,53 @@ public class XapiStatementClient {
         this.http = new XapiHttpClient(config);
     }
 
-    // single statement
-    public String sendStatement(XapiStatement statement) throws Exception {
-        String endpoint = config.getEndpoint() + "/statements";
+    public XapiStatementClient(XapiClientConfig config, XapiHttpClient httpClient) {
+        this.config = config;
+        this.http = httpClient;
+    }
 
+    protected XapiHttpClient createHttpClient() {
+        return new XapiHttpClient(config);
+    }
+
+
+    // single statement
+    public XapiResponse sendStatement(XapiStatement statement) throws Exception {
+
+        if (statement == null) {
+            return new XapiResponse(false, 400, "Statement is null");
+        }
+
+        String endpoint = config.getEndpoint() + "/statements";
         String json = mapper.writeValueAsString(statement);
 
-        return http.post(endpoint, json);
+        XapiHttpResponse response = http.post(endpoint, json);
+
+        return new XapiResponse(
+                response.getStatus() >= 200 && response.getStatus() < 300,
+                response.getStatus(),
+                response.getBody()
+        );
     }
+
 
     // Send multiple statements
-    public String sendStatements(List<XapiStatement> statements) throws Exception {
-        String endpoint = config.getEndpoint() + "/statements";
+    public XapiResponse sendStatements(List<XapiStatement> statements) throws Exception {
 
+        if (statements == null || statements.isEmpty()) {
+            return new XapiResponse(false, 400, "Statements list is empty");
+        }
+
+        String endpoint = config.getEndpoint() + "/statements";
         String json = mapper.writeValueAsString(statements);
 
-        return http.post(endpoint, json);
+        XapiHttpResponse response = http.post(endpoint, json);
+
+        return new XapiResponse(
+                response.getStatus() >= 200 && response.getStatus() < 300,
+                response.getStatus(),
+                response.getBody()
+        );
     }
+
 }

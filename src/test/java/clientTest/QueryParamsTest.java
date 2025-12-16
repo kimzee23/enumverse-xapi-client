@@ -9,16 +9,17 @@ class QueryParamsTest {
 
     @Test
     void toQueryString_buildsCorrectly() {
-        QueryParams queryParams = QueryParams.builder()
-                .verb("https://adlnet.gov/expapi/verbs/completed")
-                .activityId("https://example.com/activity/1")
-                .limit(10)
-                .build();
+        QueryParams params = QueryParams.builder()
+                .build()
+                .add("verb", "https://adlnet.gov/expapi/verbs/completed")
+                .add("activityId", "https://example.com/activity/1")
+                .add("limit", 10);
 
-        String qs = queryParams.toQueryString();
-        assertNotNull(qs);
+        String qs = params.toQueryString();
+
         assertTrue(qs.contains("verb="));
         assertTrue(qs.contains("activityId="));
-        assertTrue(qs.contains("limit="));
+        assertTrue(qs.contains("limit=10"));
     }
+
 }
