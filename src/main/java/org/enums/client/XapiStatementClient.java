@@ -15,7 +15,7 @@ public class XapiStatementClient {
         this.config = config;
         this.http = new XapiHttpClient(config);
     }
-
+    //for testing
     public XapiStatementClient(XapiClientConfig config, XapiHttpClient httpClient) {
         this.config = config;
         this.http = httpClient;
