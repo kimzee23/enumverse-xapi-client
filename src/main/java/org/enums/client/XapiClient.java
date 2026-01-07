@@ -16,7 +16,7 @@ public class XapiClient {
 
     private final HttpClient http;
     private final XapiClientConfig config;
-    private final XapiValidator validator;   // ✅ added
+    private final XapiValidator validator;
 
     public XapiClient(XapiClientConfig config) {
         this(config, HttpClient.newHttpClient());
@@ -25,7 +25,7 @@ public class XapiClient {
     public XapiClient(XapiClientConfig config, HttpClient httpClient) {
         this.config = config;
         this.http = httpClient;
-        this.validator = new XapiValidator(); // instance-based validator
+        this.validator = new XapiValidator();
     }
 
     // BASIC AUTH
