@@ -1,9 +1,9 @@
 package org.enums.client;
 
-
 import org.enums.xapi.model.XapiStatement;
-import java.net.URI;
+import org.enums.xapi.validation.XapiValidator;
 
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -16,6 +16,7 @@ public class XapiClient {
 
     private final HttpClient http;
     private final XapiClientConfig config;
+    private final XapiValidator validator;   // ✅ added
 
     public XapiClient(XapiClientConfig config) {
         this(config, HttpClient.newHttpClient());
@@ -24,6 +25,7 @@ public class XapiClient {
     public XapiClient(XapiClientConfig config, HttpClient httpClient) {
         this.config = config;
         this.http = httpClient;
+        this.validator = new XapiValidator(); // instance-based validator
     }
 
     // BASIC AUTH
@@ -40,25 +42,42 @@ public class XapiClient {
             return new XapiResponse(false, 400, "Statement is null");
         }
 
-        String json = StatementSerializer.toJson(statement);
+        // instance validation (non-static)
+        XapiValidator.ValidationResult vr = validator.validate(statement);
+        if (!vr.isValid()) {
+            return new XapiResponse(false, 400, String.join("\n", vr.getMessages()));
+        }
 
+        String json = StatementSerializer.toJson(statement);
         return getXapiResponse(json);
     }
 
     // SEND MULTIPLE STATEMENTS (BATCH)
-
     public XapiResponse sendStatements(List<XapiStatement> list) throws Exception {
 
         if (list == null || list.isEmpty()) {
             return new XapiResponse(false, 400, "Batch is empty");
         }
 
-        String json = JsonMapper.INSTANCE.writeValueAsString(list);
+        // validate each statement safely
+        for (XapiStatement s : list) {
+            XapiValidator.ValidationResult vr = validator.validate(s);
+            if (!vr.isValid()) {
+                return new XapiResponse(
+                        false,
+                        400,
+                        "Batch validation failed:\n" + String.join("\n", vr.getMessages())
+                );
+            }
+        }
 
+        String json = JsonMapper.INSTANCE.writeValueAsString(list);
         return getXapiResponse(json);
     }
 
-    private XapiResponse getXapiResponse(String json) throws java.io.IOException, InterruptedException {
+    private XapiResponse getXapiResponse(String json)
+            throws java.io.IOException, InterruptedException {
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(config.getEndpoint() + "/statements"))
                 .timeout(Duration.ofSeconds(config.getTimeoutSeconds()))
@@ -78,6 +97,3 @@ public class XapiClient {
         );
     }
 }
-
-
-
