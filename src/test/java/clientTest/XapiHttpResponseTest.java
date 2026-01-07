@@ -42,7 +42,7 @@ class XapiStatementClientTest {
         XapiResponse res = client.sendStatement(st);
 
         assertTrue(res.isSuccess());
-        assertEquals(200, res.getStatus());
+        assertEquals(200, res.getStatusCode());
         assertEquals("[]", res.getBody());
 
         ArgumentCaptor<String> bodyCaptor = ArgumentCaptor.forClass(String.class);
@@ -65,7 +65,7 @@ class XapiStatementClientTest {
         XapiResponse res = client.sendStatements(List.of(s1, s2));
 
         assertTrue(res.isSuccess());
-        assertEquals(204, res.getStatus());
+        assertEquals(204, res.getStatusCode());
     }
 
     @Test
@@ -81,7 +81,7 @@ class XapiStatementClientTest {
         XapiResponse res = client.sendStatement(st);
 
         assertFalse(res.isSuccess());
-        assertEquals(500, res.getStatus());
+        assertEquals(500, res.getStatusCode());
         assertEquals("server error", res.getBody());
     }
 }
