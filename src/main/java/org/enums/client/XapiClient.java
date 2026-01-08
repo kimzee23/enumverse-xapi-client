@@ -12,6 +12,7 @@ public class XapiClient {
     private final XapiRequestSender sender;
     private final XapiClientConfig config;
 
+
     public XapiClient(XapiClientConfig config) {
         this(config, HttpClient.newHttpClient());
     }
@@ -20,17 +21,21 @@ public class XapiClient {
         this.config = config;
         this.sender = new XapiRequestSender(http);
     }
+    public XapiPayloadService getPayloadService() {
+        return payloads;
+    }
 
-    public XapiResponse sendStatement(XapiStatement s) {
-        return execute(() -> payloads.serialize(s));
+
+    public XapiResponse sendStatement(XapiStatement statement) {
+        return execute(() -> payloads.serialize(statement));
     }
 
     public XapiResponse sendStatements(List<XapiStatement> list) {
         return execute(() -> payloads.serialize(list));
     }
 
-    public CompletableFuture<XapiResponse> sendStatementAsync(XapiStatement s) {
-        return executeAsync(() -> payloads.serialize(s));
+    public CompletableFuture<XapiResponse> sendStatementAsync(XapiStatement statement) {
+        return executeAsync(() -> payloads.serialize(statement));
     }
 
     public CompletableFuture<XapiResponse> sendStatementsAsync(List<XapiStatement> list) {
@@ -42,8 +47,8 @@ public class XapiClient {
             var json = call.run();
             var req = factory.create(json, config, config.getBasicAuthHeader());
             return sender.send(req);
-        } catch (Exception e) {
-            return new XapiResponse(false, 400, e.getMessage());
+        } catch (Exception error) {
+            return new XapiResponse(false, 400, error.getMessage());
         }
     }
 
@@ -52,15 +57,13 @@ public class XapiClient {
             var json = call.run();
             var req = factory.create(json, config, config.getBasicAuthHeader());
             return sender.sendAsync(req);
-        } catch (Exception e) {
+        } catch (Exception error) {
             return CompletableFuture.completedFuture(
-                    new XapiResponse(false, 400, e.getMessage())
+                    new XapiResponse(false, 400, error.getMessage())
             );
         }
     }
 
-    public void validateAndSerialize(Object any) {
-    }
 
     @FunctionalInterface
     private interface SerializerCall {

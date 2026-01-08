@@ -77,18 +77,21 @@ class XapiClientAsyncTest {
         when(http.sendAsync(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
                 .thenReturn(CompletableFuture.completedFuture(response));
 
-        // spy client to bypass serialization
-        XapiClient spyClient = spy(client);
-        doReturn("{}").when(spyClient).validateAndSerialize(any());
+        // spy the payload service
+        XapiPayloadService spyService = spy(client.getPayloadService());
+        doReturn("{}").when(spyService).serialize(any());
+
+        client.setPayloadService(spyService);
 
         CompletableFuture<XapiResponse> future =
-                spyClient.sendStatementAsync(validStatement());
+                client.sendStatementAsync(validStatement());
 
         XapiResponse res = future.join();
 
         assertTrue(res.isSuccess());
         assertEquals(200, res.getStatusCode());
     }
+
 
     @Test
     void sendStatementsAsync_shouldCompleteSuccessfully() {

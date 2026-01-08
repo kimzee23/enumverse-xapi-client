@@ -21,14 +21,14 @@ class XapiPayloadServiceTest {
     }
 
     @Test
-    void serializeSingleStatement() throws Exception {
+    void serializeSingleStatement(){
         String json = service.serialize(validStatement());
         assertNotNull(json);
         assertTrue(json.contains("actor"));
     }
 
     @Test
-    void serializeBatch() throws Exception {
+    void serializeBatch(){
         String json = service.serialize(List.of(validStatement()));
         assertNotNull(json);
         assertTrue(json.startsWith("["));
