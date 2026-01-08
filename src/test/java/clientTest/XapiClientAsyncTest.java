@@ -77,12 +77,6 @@ class XapiClientAsyncTest {
         when(http.sendAsync(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
                 .thenReturn(CompletableFuture.completedFuture(response));
 
-        // spy the payload service
-        XapiPayloadService spyService = spy(client.getPayloadService());
-        doReturn("{}").when(spyService).serialize(any());
-
-        client.setPayloadService(spyService);
-
         CompletableFuture<XapiResponse> future =
                 client.sendStatementAsync(validStatement());
 
@@ -91,6 +85,7 @@ class XapiClientAsyncTest {
         assertTrue(res.isSuccess());
         assertEquals(200, res.getStatusCode());
     }
+
 
 
     @Test
