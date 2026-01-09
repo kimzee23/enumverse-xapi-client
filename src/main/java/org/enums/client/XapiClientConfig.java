@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-@Setter
+
 @Getter
 @AllArgsConstructor
 public class XapiClientConfig {
@@ -14,6 +14,10 @@ public class XapiClientConfig {
     private final String username;
     private final String password;
     private final int timeoutSeconds;
+
+    private final int maxRetries;
+    private final long initialBackoffMillis;
+
 
     public String getBasicAuthHeader() {
         if (username == null || password == null) {
