@@ -2,7 +2,6 @@ package org.enums.query;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.enums.client.*;
-import org.enums.query.*;
 import org.enums.xapi.model.XapiStatement;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package clientTest;
+package org.enums.clientTest;
 
 
 import org.enums.client.*;
