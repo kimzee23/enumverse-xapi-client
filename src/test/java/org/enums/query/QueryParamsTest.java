@@ -1,7 +1,6 @@
-package org.enums.client;
+package org.enums.query;
 
 
-import org.enums.query.QueryParams;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

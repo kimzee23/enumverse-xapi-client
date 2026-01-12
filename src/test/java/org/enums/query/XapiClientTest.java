@@ -1,5 +1,8 @@
-package org.enums.client;
+package org.enums.query;
 
+import org.enums.client.XapiClient;
+import org.enums.client.XapiClientConfig;
+import org.enums.client.XapiResponse;
 import org.enums.xapi.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
