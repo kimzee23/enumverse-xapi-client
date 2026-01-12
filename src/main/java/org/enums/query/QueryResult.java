@@ -1,6 +1,5 @@
 package org.enums.query;
 
-
 import lombok.Getter;
 import org.enums.xapi.model.XapiStatement;
 
@@ -20,6 +19,6 @@ public class QueryResult {
     }
 
     public boolean isSuccess() {
-        return status >= 201 && status < 300;
+        return status >= 200 && status < 300;
     }
 }

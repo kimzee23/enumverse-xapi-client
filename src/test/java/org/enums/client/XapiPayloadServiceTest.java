@@ -1,6 +1,5 @@
 package org.enums.client;
 
-import org.enums.client.XapiPayloadService;
 import org.enums.xapi.model.*;
 import org.junit.jupiter.api.Test;
 

@@ -22,22 +22,20 @@ public class XapiQueryClient {
 
     public QueryResult queryStatements(QueryParams params) throws Exception {
         String endpoint = config.getEndpoint() + "/statements" + params.toQueryString();
-        return getQueryResult(endpoint);
+        return executeQuery(endpoint);
     }
 
     public QueryResult more(String moreUrl) throws Exception {
         String endpoint = config.getEndpoint() + moreUrl;
-        return getQueryResult(endpoint);
+        return executeQuery(endpoint);
     }
 
-    private QueryResult getQueryResult(String endpoint) throws Exception {
+    private QueryResult executeQuery(String endpoint) throws Exception {
 
         XapiHttpResponse response = http.get(endpoint);
 
-        String responseJson = response.getBody();
-        int status = response.getStatus();
-
-        Map<String, Object> json = mapper.readValue(responseJson, Map.class);
+        Map<String, Object> json =
+                mapper.readValue(response.getBody(), Map.class);
 
         List<XapiStatement> statements =
                 mapper.convertValue(
@@ -46,8 +44,8 @@ public class XapiQueryClient {
                                 .constructCollectionType(List.class, XapiStatement.class)
                 );
 
-        String more = json.containsKey("more") ? (String) json.get("more") : null;
+        String more = (String) json.getOrDefault("more", null);
 
-        return new QueryResult(statements, more, status);
+        return new QueryResult(statements, more, response.getStatus());
     }
 }

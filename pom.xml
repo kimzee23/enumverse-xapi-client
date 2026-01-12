@@ -6,7 +6,7 @@
 
     <groupId>org.enums</groupId>
     <artifactId>enumverse-xapi-client</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -60,7 +60,13 @@
             <version>7.11.0</version>
             <scope>compile</scope>
         </dependency>
-
-
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>enumverse-github</id>
+            <name>xpi clien tPackages </name>
+            <url>https://maven.pkg.github.com/kimzee23/enumverse-xapi-client</url>
+        </repository>
+    </distributionManagement>
+
 </project>
