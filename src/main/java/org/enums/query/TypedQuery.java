@@ -1,11 +1,14 @@
 package org.enums.query;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.enums.xapi.model.Agent;
 
 import java.time.Instant;
 
 public class TypedQuery {
 
     private final QueryParams params = new QueryParams();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static TypedQuery create() {
         return new TypedQuery();
@@ -41,6 +44,20 @@ public class TypedQuery {
         return this;
     }
 
+    /** ---------------- TYPED HELPERS ---------------- */
+
+    /**
+     * Typed Agent helper (recommended)
+     * Serializes Agent to JSON per xAPI spec
+     */
+    public TypedQuery actor(Agent agent) {
+        try {
+            params.add("agent", mapper.writeValueAsString(agent));
+            return this;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid Agent", e);
+        }
+    }
     public QueryParams toParams() {
         return params;
     }

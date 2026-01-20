@@ -8,7 +8,7 @@ import java.util.StringJoiner;
 
 public class QueryParams {
 
-    private final Map<String, String> map = new HashMap<>();
+    private final Map<String, Object> map = new HashMap<>();
 
     public QueryParams add(String key, Object value) {
         if (key != null && value != null) {
@@ -19,6 +19,9 @@ public class QueryParams {
 
     public boolean isEmpty() {
         return map.isEmpty();
+    }
+    public Map<String, Object> asMap() {
+        return map;
     }
 
     public String toQueryString() {
