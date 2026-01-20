@@ -8,8 +8,10 @@ import org.enums.xapi.model.XapiStatement;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class XapiQueryClient {
+
 
     private final XapiClientConfig config;
     private final XapiHttpClient http;
@@ -47,5 +49,23 @@ public class XapiQueryClient {
         String more = (String) json.getOrDefault("more", null);
 
         return new QueryResult(statements, more, response.getStatus());
+    }
+    public CompletableFuture<QueryResult> queryStatementsAsync(QueryParams params) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return queryStatements(params);
+            } catch (Exception e) {
+                return new QueryResult(List.of(), null, 400);
+            }
+        });
+    }
+    public CompletableFuture<QueryResult> moreAsync(String moreUrl) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return more(moreUrl);
+            } catch (Exception e) {
+                return new QueryResult(List.of(), null, 400);
+            }
+        });
     }
 }

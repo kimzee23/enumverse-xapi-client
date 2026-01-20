@@ -11,11 +11,19 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class XapiQueryClientTest {
+public class QueryIntegrationTest {
 
     @Test
-    void queryStatements_shouldReturnStatementsAndMore() throws Exception {
-        XapiClientConfig config = new XapiClientConfig("http://lrs", "u", "p", 5);
+    void shouldQueryStatementsWithCursor() throws Exception {
+
+        // Arrange
+        XapiClientConfig config = new XapiClientConfig(
+                "http://localhost:8000/xapi",
+                "user",
+                "pass",
+                5
+        );
+
         XapiHttpClient http = mock(XapiHttpClient.class);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -29,13 +37,25 @@ class XapiQueryClientTest {
         when(http.get(anyString()))
                 .thenReturn(new XapiHttpResponse(200, json));
 
-        XapiQueryClient client = new XapiQueryClient(config, http);
+        XapiQueryClient queryClient =
+                new XapiQueryClient(config, http);
 
-        QueryResult result = client.queryStatements(new QueryParams());
+        QueryParams params =
+                TypedQuery.create()
+                        .verb("https://adlnet.gov/expapi/verbs/completed")
+                        .limit(10)
+                        .toParams();
 
+        // Act
+        QueryResult result = queryClient.queryStatements(params);
+
+        // Assert
+        assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(1, result.getStatements().size());
         assertEquals("/statements?cursor=abc", result.getMore());
+
+        CursorIterator it = new CursorIterator(queryClient, params);
+        assertTrue(it.hasNext());
     }
-    
 }

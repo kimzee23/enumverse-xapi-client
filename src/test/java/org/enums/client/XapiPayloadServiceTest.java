@@ -13,9 +13,9 @@ class XapiPayloadServiceTest {
     private final XapiPayloadService service = new XapiPayloadService();
 
     private XapiStatement validStatement() {
-        Actor actor = new Actor("mailto:test@example.com", "Test");
-        Verb verb = new Verb("https://example.com/verbs/viewed", "Viewed");
-        Activity activity = new Activity("https://example.com/activity/1", "Lesson");
+        Actor actor = new Actor("mailto:ade@example.com", "Ade");
+        Verb verb = new Verb("https://Ade.com/verbs/viewed", "Viewed");
+        Activity activity = new Activity("https://Ade.com/activity/1", "Lesson");
         return new XapiStatement(null, actor, verb, activity, Instant.now());
     }
 
