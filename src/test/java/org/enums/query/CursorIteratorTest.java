@@ -1,37 +1,52 @@
 package org.enums.query;
 
-import org.enums.client.XapiClientConfig;
-import org.enums.client.XapiHttpClient;
+import org.enums.xapi.model.XapiStatement;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class CursorIteratorTest {
-        public static void main(String[] args) throws Exception {
 
-            XapiClientConfig config = new XapiClientConfig(
-                    "https://lrs.example.com/xapi",
-                    "username",
-                    "password",
-                    5
-            );
+    @Test
+    void shouldIterateThroughAllPages() throws Exception {
 
-            XapiHttpClient http = new XapiHttpClient(config);
+        // mock client
+        XapiQueryClient client = mock(XapiQueryClient.class);
 
-            XapiQueryClient queryClient = new XapiQueryClient(config, http);
+        QueryParams params = new QueryParams();
 
-            QueryParams params =
-                    TypedQuery.create()
-                            .verb("https://adlnet.gov/expapi/verbs/completed")
-                            .limit(50)
-                            .toParams();
+        // page 1
+        QueryResult first = new QueryResult(
+                List.of(new XapiStatement()),
+                "/statements?cursor=abc",
+                200
+        );
 
-            QueryResult result = queryClient.queryStatements(params);
+        // page 2 (last)
+        QueryResult second = new QueryResult(
+                List.of(new XapiStatement()),
+                null,
+                200
+        );
 
-            result.getStatements().forEach(System.out::println);
+        when(client.queryStatements(params)).thenReturn(first);
+        when(client.more("/statements?cursor=abc")).thenReturn(second);
 
-            CursorIterator it = new CursorIterator(queryClient, params);
-            while (it.hasNext()) {
-                it.next().forEach(System.out::println);
-            }
-        }
+        CursorIterator it = new CursorIterator(client, params);
+
+        assertTrue(it.hasNext());
+
+        List<?> page1 = it.next();
+        assertEquals(1, page1.size());
+
+        assertTrue(it.hasNext());
+
+        List<?> page2 = it.next();
+        assertEquals(1, page2.size());
+
+        assertFalse(it.hasNext());
     }
+}

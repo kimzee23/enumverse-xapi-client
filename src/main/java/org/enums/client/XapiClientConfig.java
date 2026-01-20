@@ -19,7 +19,7 @@ public class XapiClientConfig {
     private final int maxRetries;
     private final long initialBackoffMillis;
 
-    //  Convenience constructor
+    // constructor
     public XapiClientConfig(
             String endpoint,
             String username,

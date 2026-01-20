@@ -49,7 +49,7 @@ public class QueryIntegrationTest {
         // Act
         QueryResult result = queryClient.queryStatements(params);
 
-        // Assert
+
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(1, result.getStatements().size());

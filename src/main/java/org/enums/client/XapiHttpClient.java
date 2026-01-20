@@ -17,8 +17,6 @@ public class XapiHttpClient {
         this.client = HttpClient.newHttpClient();
     }
 
-
-
     private String authHeader() {
         String raw = config.getUsername() + ":" + config.getPassword();
         return "Basic " + Base64.getEncoder().encodeToString(raw.getBytes());
